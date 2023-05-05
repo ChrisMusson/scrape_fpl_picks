@@ -65,7 +65,7 @@ async def main():
             try:
                 await update_json(session, f"sertalp/squads_{i:04d}.json", start_user_id=start, end_user_id=end, current_gw=current_gw)
                 t = time.time()
-                print(f"Success: {start} - {end}, {round(t - a, 1)}s taken - {round(t - TIME_START, 1)}s total - {time.strftime('%H:%M:%S', time.gmtime())}")
+                print(f"Success: {start} - {end}, {round(t - a, 1)}s taken - {round(t - TIME_START, 1)}s total - {time.strftime('%H:%M:%S', time.localtime())}")
             except Exception as e:
                 print(e)
         time.sleep(5)
