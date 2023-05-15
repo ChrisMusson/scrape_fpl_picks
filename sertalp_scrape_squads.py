@@ -12,6 +12,7 @@ parser.add_argument("end_chunk", type=int)
 args = parser.parse_args()
 TOTAL_PLAYERS = 7_811_694
 HEADERS = {"User-Agent": "Android 14.1"}
+BASE_FOLDER = "sertalp"
 
 
 async def fetch(session, url, max_retries=500, cooldown=0.1):
@@ -56,7 +57,7 @@ async def main():
     current_gw = 35
     TIME_START = time.time()
 
-    done = set(sorted([int(x[:-5]) for x in os.listdir("sertalp")]))
+    done = set(sorted([int(x[:-5]) for x in os.listdir(BASE_FOLDER)]))
     target = set(range(args.start_chunk, args.end_chunk))
     to_do = sorted(target - done)
 
@@ -70,7 +71,7 @@ async def main():
             try:
                 await update_json(
                     session,
-                    f"sertalp/{i:04d}.json",
+                    f"{BASE_FOLDER}/{i:04d}.json",
                     start_user_id=start,
                     end_user_id=end,
                     current_gw=current_gw,
