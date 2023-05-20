@@ -5,6 +5,9 @@ import json
 import os
 import time
 
+from nordvpn_switcher import initialize_VPN, rotate_VPN
+
+vpn_settings = initialize_VPN(area_input=["Belgium,France,Netherlands"])
 
 parser = argparse.ArgumentParser()
 parser.add_argument("start_chunk", type=int)
@@ -56,33 +59,45 @@ async def update_json(session, filename, start_user_id, end_user_id, current_gw)
 async def main():
     current_gw = 35
     TIME_START = time.time()
+    VPN_ROTATE_FREQUENCY = 5
 
     done = set(sorted([int(x[:-5]) for x in os.listdir(BASE_FOLDER)]))
     target = set(range(args.start_chunk, args.end_chunk))
     to_do = sorted(target - done)
+    print(to_do)
+    print(len(to_do))
 
-    async with aiohttp.ClientSession() as session:
-        for chunk_num, i in enumerate(to_do, start=1):
-            a = time.time()
-            n = 1000  # number of users in each file
-            start = n * i + 1
-            end = 7811694 if i == 7811 else start + n - 1
+    session = aiohttp.ClientSession()
+    rotate_VPN(vpn_settings)
 
-            try:
-                await update_json(
-                    session,
-                    f"{BASE_FOLDER}/{i:04d}.json",
-                    start_user_id=start,
-                    end_user_id=end,
-                    current_gw=current_gw,
-                )
-                t = time.time()
-                ftime = time.strftime("%H:%M:%S", time.localtime())
-                print(
-                    f"Success: {start} - {end}, {round(t - a, 1)}s taken - {round(t - TIME_START, 1)}s total - {ftime} -- ({chunk_num})"
-                )
-            except Exception as e:
-                print(e)
+    for chunk_num, i in enumerate(to_do, start=1):
+        if chunk_num % VPN_ROTATE_FREQUENCY == 0:
+            print("trying to rotate")
+            await session.close()
+            rotate_VPN(vpn_settings)
+            session = aiohttp.ClientSession()
+            time.sleep(1)
+        a = time.time()
+        n = 1000  # number of users in each file
+        start = n * i + 1
+        end = TOTAL_PLAYERS if i == TOTAL_PLAYERS // n else start + n - 1
+
+        try:
+            await update_json(
+                session,
+                f"{BASE_FOLDER}/{i:04d}.json",
+                start_user_id=start,
+                end_user_id=end,
+                current_gw=current_gw,
+            )
+            t = time.time()
+            ftime = time.strftime("%H:%M:%S", time.localtime())
+            print(
+                f"Success: {start} - {end}, {round(t - a, 1)}s taken - {round(t - TIME_START, 1)}s total - {ftime} -- ({chunk_num})"
+            )
+        except Exception as e:
+            print(e)
+    await session.close()
 
 
 loop = asyncio.new_event_loop()
