@@ -72,21 +72,20 @@ async def update_json(session, filename, start_user_id, end_user_id, current_gw)
 
 
 async def main():
-    current_gw = 37
+    current_gw = 38
     TIME_START = time.time()
-    VPN_ROTATE_FREQUENCY = 30
-
-    # done = set(sorted([int(x[:-5]) for x in os.listdir(BASE_FOLDER)]))
-    # target = set(range(args.start_chunk, args.end_chunk))
-    # to_do = sorted(target - done)
-    # print(to_do)
-    # print(len(to_do))
+    VPN_ROTATE_FREQUENCY = 100
 
     session = aiohttp.ClientSession()
     rotate_VPN(vpn_settings)
 
-    for chunk_num, i in enumerate(range(args.start_chunk, args.end_chunk), start=1):
-        # for chunk_num, i in enumerate(to_do, start=1):
+    files_dct = {file: os.path.getsize(f"sertalp/{file}") for file in os.listdir(BASE_FOLDER)}
+    files_dct = sorted(files_dct.items(), key=lambda x: x[1])[:20]
+    to_do = [int(x[0][:4]) for x in files_dct]
+    print(to_do)
+
+    # for chunk_num, i in enumerate(range(args.start_chunk, args.end_chunk), start=1):
+    for chunk_num, i in enumerate(to_do, start=1):
         if chunk_num % VPN_ROTATE_FREQUENCY == 0:
             await session.close()
             while True:
