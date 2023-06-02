@@ -9,7 +9,7 @@ import time
 
 from nordvpn_switcher import initialize_VPN, rotate_VPN
 
-vpn_settings = initialize_VPN(area_input=["random countries europe 20"])
+# vpn_settings = initialize_VPN(area_input=["random countries europe 20"])
 
 parser = argparse.ArgumentParser()
 parser.add_argument("start_chunk", type=int)
@@ -19,7 +19,7 @@ TOTAL_PLAYERS = 7_811_694
 BASE_FOLDER = "sertalp"
 
 
-async def fetch(session, url, headers, max_retries=500, cooldown=0.1):
+async def fetch(session, url, headers, max_retries=200, cooldown=0.1):
     retries_count = 0
     while True:
         try:
@@ -43,7 +43,7 @@ async def update_json(session, filename, start_user_id, end_user_id):
 
     urls = [f"https://fantasy.premierleague.com/api/entry/{user_id}/transfers/" for user_id in user_ids]
 
-    headers = {"User-Agent": f"Android {random.choice(range(7, 20))}.{random.choice(range(1,4))}"}
+    headers = {"User-Agent": f"Android {random.choice(range(7, 30))}.{random.choice(range(4,11))}"}
     tasks = [fetch(session, url, headers) for url in urls]
     results = await asyncio.gather(*tasks)
 
@@ -62,7 +62,7 @@ async def main():
     VPN_ROTATE_FREQUENCY = 100
 
     session = aiohttp.ClientSession()
-    rotate_VPN(vpn_settings)
+    # rotate_VPN(vpn_settings)
 
     # files_dct = {file: os.path.getsize(f"sertalp/{file}") for file in os.listdir(BASE_FOLDER)}
     # files_dct = sorted(files_dct.items(), key=lambda x: x[1])
@@ -71,16 +71,16 @@ async def main():
 
     for chunk_num, i in enumerate(range(args.start_chunk, args.end_chunk), start=1):
         # for chunk_num, i in enumerate(to_do, start=1):
-        if chunk_num % VPN_ROTATE_FREQUENCY == 0:
-            await session.close()
-            while True:
-                try:
-                    rotate_VPN(vpn_settings)
-                    session = aiohttp.ClientSession()
-                    break
-                except:
-                    pass
-            time.sleep(1)
+        # if chunk_num % VPN_ROTATE_FREQUENCY == 0:
+        #     await session.close()
+        #     while True:
+        #         try:
+        #             rotate_VPN(vpn_settings)
+        #             session = aiohttp.ClientSession()
+        #             break
+        #         except:
+        #             pass
+        #     time.sleep(1)
         a = time.time()
         n = 1000  # number of users in each file
         start = n * i + 1

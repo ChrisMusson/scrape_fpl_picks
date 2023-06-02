@@ -9,7 +9,7 @@ import time
 
 from nordvpn_switcher import initialize_VPN, rotate_VPN
 
-vpn_settings = initialize_VPN(area_input=["random countries europe 20"])
+# vpn_settings = initialize_VPN(area_input=["random countries europe 20"])
 
 parser = argparse.ArgumentParser()
 parser.add_argument("start_chunk", type=int)
@@ -77,25 +77,25 @@ async def main():
     VPN_ROTATE_FREQUENCY = 100
 
     session = aiohttp.ClientSession()
-    rotate_VPN(vpn_settings)
+    # rotate_VPN(vpn_settings)
 
     files_dct = {file: os.path.getsize(f"sertalp/{file}") for file in os.listdir(BASE_FOLDER)}
-    files_dct = sorted(files_dct.items(), key=lambda x: x[1])[:20]
+    files_dct = sorted(files_dct.items(), key=lambda x: x[1])
     to_do = [int(x[0][:4]) for x in files_dct]
     print(to_do)
 
-    # for chunk_num, i in enumerate(range(args.start_chunk, args.end_chunk), start=1):
-    for chunk_num, i in enumerate(to_do, start=1):
-        if chunk_num % VPN_ROTATE_FREQUENCY == 0:
-            await session.close()
-            while True:
-                try:
-                    rotate_VPN(vpn_settings)
-                    session = aiohttp.ClientSession()
-                    break
-                except:
-                    pass
-            time.sleep(1)
+    for chunk_num, i in enumerate(range(args.start_chunk, args.end_chunk), start=1):
+        # for chunk_num, i in enumerate(to_do, start=1):
+        # if chunk_num % VPN_ROTATE_FREQUENCY == 0:
+        #     await session.close()
+        #     while True:
+        #         try:
+        #             rotate_VPN(vpn_settings)
+        #             session = aiohttp.ClientSession()
+        #             break
+        #         except:
+        #             pass
+        #     time.sleep(1)
         a = time.time()
         n = 1000  # number of users in each file
         start = n * i + 1
