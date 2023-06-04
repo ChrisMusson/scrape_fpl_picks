@@ -83,7 +83,7 @@ def get_live_user_data(s, user_id):
 
 
 def get_data_from_file(user_id):
-    with open(f"{BASE_FOLDER}/{(user_id - 1) // 1000:04d}.json", "r") as f:
+    with open(f"{BASE_FOLDER}/{(user_id - 1) // 1000:04d}.json", "r", encoding="utf-8") as f:
         return json.load(f)[user_id % 1000 - 1]
 
 

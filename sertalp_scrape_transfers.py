@@ -35,7 +35,7 @@ async def fetch(session, url, headers, max_retries=200, cooldown=0.1):
 
 async def update_json(session, filename, start_user_id, end_user_id):
     user_ids = list(range(start_user_id, end_user_id + 1))
-    with open(filename, "r") as f:
+    with open(filename, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     if "transfers" in data[0]:
@@ -53,7 +53,7 @@ async def update_json(session, filename, start_user_id, end_user_id):
         else:
             user["transfers"] = [[x["element_out"], x["element_in"], x["event"]] for x in result[::-1]]
 
-    with open(filename, "w") as f:
+    with open(filename, "w", encoding="utf-8") as f:
         f.write(json.dumps(data))
 
 

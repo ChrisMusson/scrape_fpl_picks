@@ -36,7 +36,7 @@ async def fetch(session, url, headers, max_retries=500, cooldown=0.1):
 async def update_json(session, filename, start_user_id, end_user_id, current_gw):
     user_ids = list(range(start_user_id, end_user_id + 1))
     try:
-        with open(filename, "r") as f:
+        with open(filename, "r", encoding="utf-8") as f:
             existing_data = json.load(f)
             # start_gw = sorted([int(x) for x in existing_data[0]["picks"].keys()])[-1] + 1
             gws = [x for x in range(1, current_gw + 1) if str(x) not in existing_data[0]["picks"].keys()]
@@ -68,7 +68,7 @@ async def update_json(session, filename, start_user_id, end_user_id, current_gw)
             user_data["picks"][gw] = [[x["element"], x["multiplier"]] for x in result["picks"]]
         data.append(user_data)
 
-    with open(filename, "w") as f:
+    with open(filename, "w", encoding="utf-8") as f:
         f.write(json.dumps(data))
 
 
